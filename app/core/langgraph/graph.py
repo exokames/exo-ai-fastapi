@@ -322,11 +322,11 @@ class LangGraphAgent:
             self._graph = await self.create_graph()
 
         try:
-            async for token, _ in self._graph.astream(
-                {"messages": dump_messages(messages), "session_id": session_id}, config, stream_mode="messages"
+            async for data in self._graph.astream_events(
+                {"messages": dump_messages(messages), "session_id": session_id}, config, version="v2"
             ):
                 try:
-                    yield token.content
+                    yield data
                 except Exception as token_error:
                     logger.error("Error processing token", error=str(token_error), session_id=session_id)
                     # Continue with next token even if current one fails

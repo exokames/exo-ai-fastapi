@@ -83,5 +83,5 @@ class StreamResponse(BaseModel):
         done: Whether the stream is complete.
     """
 
-    content: str = Field(default="", description="The content of the current chunk")
+    content: dict = Field(description="The content of the current chunk")
     done: bool = Field(default=False, description="Whether the stream is complete")

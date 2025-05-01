@@ -4,7 +4,10 @@ This module provides endpoints for chat interactions, including regular chat,
 streaming chat, message history management, and chat history clearing.
 """
 
+import copy
 import json
+import logging as local_logging
+import pprint
 from typing import List
 
 from fastapi import (
@@ -16,7 +19,10 @@ from fastapi import (
 from fastapi.responses import StreamingResponse
 
 from app.api.v1.auth import get_current_session
-from app.core.config import settings
+from app.core.config import (
+    Environment,
+    settings,
+)
 from app.core.langgraph.graph import LangGraphAgent
 from app.core.limiter import limiter
 from app.core.logging import logger
@@ -28,8 +34,22 @@ from app.schemas.chat import (
     StreamResponse,
 )
 
+local_logger = local_logging.getLogger(__name__)
 router = APIRouter()
 agent = LangGraphAgent()
+
+# The events that are supported by the UI Frontend
+SUPPORTED_EVENTS = [
+    {"on_tool_start": ["retrieve"]},
+    {"on_tool_end": ["retrieve"]},
+    # {"on_chain_start": ["agent"]},
+    {"on_chain_end": ["generate"]},
+    {"on_chat_model_stream": ["chat"]},
+    # "on_retriever_start",
+    # "on_retriever_end",
+]
+
+session = Session(id="123456", user_id=1, name="Test Session")
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -37,7 +57,7 @@ agent = LangGraphAgent()
 async def chat(
     request: Request,
     chat_request: ChatRequest,
-    session: Session = Depends(get_current_session),
+    # session: Session = Depends(get_current_session),
 ):
     """Process a chat request using LangGraph.
 
@@ -75,7 +95,7 @@ async def chat(
 async def chat_stream(
     request: Request,
     chat_request: ChatRequest,
-    session: Session = Depends(get_current_session),
+    # session: Session = Depends(get_current_session),
 ):
     """Process a chat request using LangGraph with streaming response.
 
@@ -107,16 +127,41 @@ async def chat_stream(
                 Exception: If there's an error during streaming.
             """
             try:
-                full_response = ""
-                async for chunk in agent.get_stream_response(
+                async for data in agent.get_stream_response(
                     chat_request.messages, session.id, user_id=session.user_id
                 ):
-                    full_response += chunk
-                    response = StreamResponse(content=chunk, done=False)
+                    event_type = data["event"]
+                    node_name = data.get("metadata", {}).get("langgraph_node", "")
+                    # local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
+
+                    supported = False
+                    for event in SUPPORTED_EVENTS:
+                        if event_type in event and node_name in event[event_type]:
+                            supported = True
+                            break
+
+                    if supported:
+                        if settings.ENVIRONMENT == Environment.DEVELOPMENT:
+                            local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
+                            debug_data = copy.deepcopy(data)
+
+                            if "messages" in debug_data.get("data", {}).get("output", {}):
+                                debug_data["data"]["output"]["messages"] = []
+
+                            if "messages" in debug_data.get("data", {}).get("input", {}):
+                                debug_data["data"]["input"]["messages"] = []
+
+                            if "context" in debug_data.get("data", {}).get("input", {}):
+                                debug_data["data"]["input"]["context"] = []
+
+                            pprint.pprint(debug_data, indent=2, width=80, depth=None)
+                            local_logger.info("\n---\n")
+
+                    response = StreamResponse(content=data, done=False)
                     yield f"data: {json.dumps(response.model_dump())}\n\n"
 
                 # Send final message indicating completion
-                final_response = StreamResponse(content="", done=True)
+                final_response = StreamResponse(content={}, done=True)
                 yield f"data: {json.dumps(final_response.model_dump())}\n\n"
 
             except Exception as e:
@@ -126,7 +171,7 @@ async def chat_stream(
                     error=str(e),
                     exc_info=True,
                 )
-                error_response = StreamResponse(content=str(e), done=True)
+                error_response = StreamResponse(content={"error": str(e)}, done=True)
                 yield f"data: {json.dumps(error_response.model_dump())}\n\n"
 
         return StreamingResponse(event_generator(), media_type="text/event-stream")
@@ -145,7 +190,7 @@ async def chat_stream(
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["messages"][0])
 async def get_session_messages(
     request: Request,
-    session: Session = Depends(get_current_session),
+    # session: Session = Depends(get_current_session),
 ):
     """Get all messages for a session.
 
@@ -171,7 +216,7 @@ async def get_session_messages(
 @limiter.limit(settings.RATE_LIMIT_ENDPOINTS["messages"][0])
 async def clear_chat_history(
     request: Request,
-    session: Session = Depends(get_current_session),
+    # session: Session = Depends(get_current_session),
 ):
     """Clear all messages for a session.
 
