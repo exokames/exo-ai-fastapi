@@ -157,8 +157,8 @@ async def chat_stream(
                             pprint.pprint(debug_data, indent=2, width=80, depth=None)
                             local_logger.info("\n---\n")
 
-                    response = StreamResponse(content=data, done=False)
-                    yield f"data: {json.dumps(response.model_dump())}\n\n"
+                        response = StreamResponse(content=data, done=False)
+                        yield f"data: {json.dumps(response.model_dump())}\n\n"
 
                 # Send final message indicating completion
                 final_response = StreamResponse(content={}, done=True)
