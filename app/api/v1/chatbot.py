@@ -127,42 +127,45 @@ async def chat_stream(
                 Exception: If there's an error during streaming.
             """
             try:
-                async for data in agent.get_stream_response(
-                    chat_request.messages, session.id, user_id=session.user_id
-                ):
-                    event_type = data["event"]
-                    node_name = data.get("metadata", {}).get("langgraph_node", "")
-                    # local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
+                with llm_stream_duration_seconds.labels(model=agent.llm.model_name).time():
+                    async for data in agent.get_stream_response(
+                        chat_request.messages, session.id, user_id=session.user_id
+                    ):
+                        event_type = data["event"]
+                        node_name = data.get("metadata", {}).get("langgraph_node", "")
+                        # local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
+                        logger.info(f"type\n{type(data)}")
+                        logger.info(f"data\n{data}")
 
-                    supported = False
-                    for event in SUPPORTED_EVENTS:
-                        if event_type in event and node_name in event[event_type]:
-                            supported = True
-                            break
+                        supported = False
+                        for event in SUPPORTED_EVENTS:
+                            if event_type in event and node_name in event[event_type]:
+                                supported = True
+                                break
 
-                    if supported:
-                        if settings.ENVIRONMENT == Environment.DEVELOPMENT:
-                            local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
-                            debug_data = copy.deepcopy(data)
+                        if supported:
+                            if settings.ENVIRONMENT == Environment.DEVELOPMENT:
+                                local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
+                                debug_data = copy.deepcopy(data)
 
-                            if "messages" in debug_data.get("data", {}).get("output", {}):
-                                debug_data["data"]["output"]["messages"] = []
+                                if "messages" in debug_data.get("data", {}).get("output", {}):
+                                    debug_data["data"]["output"]["messages"] = []
 
-                            if "messages" in debug_data.get("data", {}).get("input", {}):
-                                debug_data["data"]["input"]["messages"] = []
+                                if "messages" in debug_data.get("data", {}).get("input", {}):
+                                    debug_data["data"]["input"]["messages"] = []
 
-                            if "context" in debug_data.get("data", {}).get("input", {}):
-                                debug_data["data"]["input"]["context"] = []
+                                if "context" in debug_data.get("data", {}).get("input", {}):
+                                    debug_data["data"]["input"]["context"] = []
 
-                            pprint.pprint(debug_data, indent=2, width=80, depth=None)
-                            local_logger.info("\n---\n")
+                                pprint.pprint(debug_data, indent=2, width=80, depth=None)
+                                local_logger.info("\n---\n")
 
-                        response = StreamResponse(content=data, done=False)
-                        yield f"data: {json.dumps(response.model_dump())}\n\n"
+                            response = StreamResponse(content=data, done=False)
+                            yield f"data: {json.dumps(response.model_dump())}\n\n"
 
-                # Send final message indicating completion
-                final_response = StreamResponse(content={}, done=True)
-                yield f"data: {json.dumps(final_response.model_dump())}\n\n"
+                    # Send final message indicating completion
+                    final_response = StreamResponse(content={}, done=True)
+                    yield f"data: {json.dumps(final_response.model_dump())}\n\n"
 
             except Exception as e:
                 logger.error(
