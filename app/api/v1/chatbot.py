@@ -26,6 +26,7 @@ from app.core.config import (
 from app.core.langgraph.graph import LangGraphAgent
 from app.core.limiter import limiter
 from app.core.logging import logger
+from app.core.metrics import llm_stream_duration_seconds
 from app.models.session import Session
 from app.schemas.chat import (
     ChatRequest,
@@ -79,7 +80,6 @@ async def chat(
             message_count=len(chat_request.messages),
         )
 
-        # Process the request through the LangGraph
         result = await agent.get_response(chat_request.messages, session.id, user_id=session.user_id)
 
         logger.info("chat_request_processed", session_id=session.id)
