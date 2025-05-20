@@ -45,6 +45,8 @@ router = APIRouter()
 security = HTTPBearer()
 db_service = DatabaseService()
 
+user_session = Session(id="123456", user_id=1, name="Test Session")
+
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
@@ -228,7 +230,9 @@ async def login(
 
 
 @router.post("/session", response_model=SessionResponse)
-async def create_session(user: User = Depends(get_current_user)):
+async def create_session(
+    # user: User = Depends(get_current_user)
+):
     """Create a new chat session for the authenticated user.
 
     Args:
@@ -242,7 +246,8 @@ async def create_session(user: User = Depends(get_current_user)):
         session_id = str(uuid.uuid4())
 
         # Create session in database
-        session = await db_service.create_session(session_id, user.id)
+        # session = await db_service.create_session(session_id, user.id)
+        session = await db_service.create_session(session_id, user_session.user_id)
 
         # Create access token for the session
         token = create_access_token(session_id)
@@ -250,7 +255,8 @@ async def create_session(user: User = Depends(get_current_user)):
         logger.info(
             "session_created",
             session_id=session_id,
-            user_id=user.id,
+            # user_id=user.id,
+            user_id=user_session.user_id,
             name=session.name,
             expires_at=token.expires_at.isoformat(),
         )
