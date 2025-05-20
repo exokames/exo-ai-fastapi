@@ -263,7 +263,8 @@ async def create_session(
 
         return SessionResponse(session_id=session_id, name=session.name, token=token)
     except ValueError as ve:
-        logger.error("session_creation_validation_failed", error=str(ve), user_id=user.id, exc_info=True)
+        # logger.error("session_creation_validation_failed", error=str(ve), user_id=user.id, exc_info=True)
+        logger.error("session_creation_validation_failed", error=str(ve), user_id=user_session.user_id, exc_info=True)
         raise HTTPException(status_code=422, detail=str(ve))
 
 

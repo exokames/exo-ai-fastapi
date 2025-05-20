@@ -133,9 +133,7 @@ async def chat_stream(
                     ):
                         event_type = data["event"]
                         node_name = data.get("metadata", {}).get("langgraph_node", "")
-                        # local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
-                        logger.info(f"type\n{type(data)}")
-                        logger.info(f"data\n{data}")
+                        local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
 
                         supported = False
                         for event in SUPPORTED_EVENTS:
@@ -145,7 +143,6 @@ async def chat_stream(
 
                         if supported:
                             if settings.ENVIRONMENT == Environment.DEVELOPMENT:
-                                local_logger.info(f"event_type: {event_type}, node_name: {node_name}")
                                 debug_data = copy.deepcopy(data)
 
                                 if "messages" in debug_data.get("data", {}).get("output", {}):
@@ -157,8 +154,8 @@ async def chat_stream(
                                 if "context" in debug_data.get("data", {}).get("input", {}):
                                     debug_data["data"]["input"]["context"] = []
 
-                                pprint.pprint(debug_data, indent=2, width=80, depth=None)
-                                local_logger.info("\n---\n")
+                                # pprint.pprint(debug_data, indent=2, width=80, depth=None)
+                                # local_logger.info("\n---\n")
 
                             response = StreamResponse(content=data, done=False)
                             yield f"data: {json.dumps(response.model_dump())}\n\n"
