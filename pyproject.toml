@@ -33,6 +33,7 @@ dependencies = [
     "tqdm>=4.67.1",
     "colorama>=0.4.6",
     "langchain-tavily>=0.1.6",
+    "langchain-qdrant>=0.2.0",
 ]
 
 [project.optional-dependencies]

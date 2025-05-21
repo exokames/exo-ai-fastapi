@@ -198,6 +198,20 @@ class Settings:
         self.EVALUATION_API_KEY = os.getenv("EVALUATION_API_KEY", self.LLM_API_KEY)
         self.EVALUATION_SLEEP_TIME = int(os.getenv("EVALUATION_SLEEP_TIME", "10"))
 
+        # Qdrant Configuration
+        self.QDRANT_URL = os.getenv("QDRANT_URL", "")
+        self.QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
+        self.QDRANT_COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME", "")
+
+        # MongoDB Configuration
+        self.ATLAS_URI = os.getenv("ATLAS_URI", "")
+        self.DBNAME = os.getenv("DBNAME", "")
+
+        # Ingest Configuration
+        self.RESTAURANT_DOCS_PATH = os.getenv("RESTAURANT_DOCS_PATH", "")
+        self.PRODUCT_DOCS_PATH = os.getenv("PRODUCT_DOCS_PATH", "")
+        self.EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "vertexai/text-embedding-004")
+
         # Apply environment-specific settings
         self.apply_environment_settings()
 

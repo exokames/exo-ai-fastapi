@@ -1,5 +1,3 @@
-"""Enable Langgraph Studio for debugging."""
-
 from app.core.langgraph.graph import LangGraphAgent
 
 agent = LangGraphAgent()
