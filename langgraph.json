@@ -3,7 +3,8 @@
     "."
   ],
   "graphs": {
-    "chat": "./app/core/langgraph/studio.py:get_graph"
+    "chat": "./app/core/langgraph/studio.py:get_graph",
+    "retrieval": "./app/core/langgraph/retrieval_graph/studio.py:get_graph"
   },
   "env": ".env.development"
 }
