@@ -4,7 +4,7 @@ from typing import Generator
 from bs4 import BeautifulSoup, Doctype, NavigableString, Tag
 
 
-def langchain_docs_extractor(soup: BeautifulSoup) -> str:
+def web_docs_extractor(soup: BeautifulSoup) -> str:
     # Remove all the tags that are not meaningful for the extraction.
     SCAPE_TAGS = ["nav", "footer", "aside", "script", "style"]
     [tag.decompose() for tag in soup.find_all(SCAPE_TAGS)]
@@ -45,9 +45,7 @@ def langchain_docs_extractor(soup: BeautifulSoup) -> str:
 
                         lines: list[str] = []
                         for span in child.find_all("span", class_="token-line"):
-                            line_content = "".join(
-                                token.get_text() for token in span.find_all("span")
-                            )
+                            line_content = "".join(token.get_text() for token in span.find_all("span"))
                             lines.append(line_content)
 
                         code_content = "\n".join(lines)
@@ -68,9 +66,7 @@ def langchain_docs_extractor(soup: BeautifulSoup) -> str:
                         yield f"{i + 1}. "
                         yield from get_text(li)
                         yield "\n\n"
-                elif child.name == "div" and "tabs-container" in child.attrs.get(
-                    "class", [""]
-                ):
+                elif child.name == "div" and "tabs-container" in child.attrs.get("class", [""]):
                     tabs = child.find_all("li", {"role": "tab"})
                     tab_panels = child.find_all("div", {"role": "tabpanel"})
                     for tab, tab_panel in zip(tabs, tab_panels):
@@ -95,9 +91,7 @@ def langchain_docs_extractor(soup: BeautifulSoup) -> str:
                     if tbody_exists:
                         for row in tbody.find_all("tr"):
                             yield "| "
-                            yield " | ".join(
-                                cell.get_text(strip=True) for cell in row.find_all("td")
-                            )
+                            yield " | ".join(cell.get_text(strip=True) for cell in row.find_all("td"))
                             yield " |\n"
 
                     yield "\n\n"

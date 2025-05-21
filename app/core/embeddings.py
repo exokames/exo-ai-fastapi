@@ -1,5 +1,4 @@
 from langchain_core.embeddings import Embeddings
-from langchain_google_vertexai.embeddings import VertexAIEmbeddings
 
 
 def make_text_encoder(model: str) -> Embeddings:
@@ -12,8 +11,8 @@ def make_text_encoder(model: str) -> Embeddings:
             return OpenAIEmbeddings(model=model)
 
         case "vertexai":
-            from langchain_google_vertexai.embeddings import VertexAIEmbeddings
+            from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
-            return VertexAIEmbeddings(model=model)
+            return GoogleGenerativeAIEmbeddings(model=f"models/{model}", task_type="RETRIEVAL_DOCUMENT")
         case _:
             raise ValueError(f"Unsupported embedding provider: {provider}")
