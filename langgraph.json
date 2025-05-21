@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "chat": "./app/core/langgraph/studio.py:get_graph"
+  },
+  "env": ".env.development"
+}
