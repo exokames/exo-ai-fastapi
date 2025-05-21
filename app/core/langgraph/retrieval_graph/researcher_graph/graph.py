@@ -1,8 +1,16 @@
 """This file contains the LangGraph Agent/workflow and interactions with the LLM."""
 
-from typing import Any, AsyncGenerator, Dict, Literal, Optional, TypedDict, cast
+from typing import (
+    Any,
+    AsyncGenerator,
+    Dict,
+    Optional,
+    TypedDict,
+    cast,
+)
 
 from asgiref.sync import sync_to_async
+from langchain_core.documents import Document
 from langchain_core.messages import (
     BaseMessage,
     convert_to_openai_messages,
@@ -11,6 +19,7 @@ from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
 from langfuse.callback import CallbackHandler
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+from langgraph.constants import Send
 from langgraph.graph import (
     END,
     START,
@@ -25,19 +34,13 @@ from app.core.config import (
     settings,
 )
 from app.core.langgraph.retrieval_graph.configuration import AgentConfiguration
-from app.core.langgraph.retrieval_graph.researcher_graph.graph import LangGraphAgent as ResearcherLangGraphAgent
-from app.core.langgraph.retrieval_graph.state import AgentState, InputState
-from app.core.langgraph.retrieval_graph.utils import format_docs
-from app.core.langgraph.tools import tools
+from app.core.langgraph.retrieval_graph.researcher_graph import retrieval
+from app.core.langgraph.retrieval_graph.researcher_graph.state import QueryState, ResearcherState
 from app.core.logging import logger
 from app.schemas import (
     Message,
 )
-from app.utils import (
-    dump_messages,
-)
-
-researcher_agent = ResearcherLangGraphAgent()
+from app.utils import dump_messages
 
 
 class LangGraphAgent:
@@ -114,91 +117,64 @@ class LangGraphAgent:
                 raise e
         return self._connection_pool
 
-    async def _create_research_plan(self, state: AgentState, *, config: RunnableConfig) -> dict[str, list[str]]:
-        """Create a step-by-step research plan for answering a LangChain-related query.
+    async def _generate_queries(self, state: ResearcherState, *, config: RunnableConfig) -> dict[str, list[str]]:
+        """Generate search queries based on the question (a step in the research plan).
+
+        This function uses a language model to generate diverse search queries to help answer the question.
 
         Args:
-            state (AgentState): The current state of the agent, including conversation history.
-            config (RunnableConfig): Configuration with the model used to generate the plan.
+            state (ResearcherState): The current state of the researcher, including the user's question.
+            config (RunnableConfig): Configuration with the model used to generate queries.
 
         Returns:
-            dict[str, list[str]]: A dictionary with a 'steps' key containing the list of research steps.
+            dict[str, list[str]]: A dictionary with a 'queries' key containing the list of generated search queries.
         """
 
-        class Plan(TypedDict):
-            """Generate research plan."""
-
-            steps: list[str]
+        class Response(TypedDict):
+            queries: list[str]
 
         configuration = AgentConfiguration.from_runnable_config(config)
         structured_output_kwargs = {"method": "function_calling"} if "openai" in configuration.query_model else {}
-        model = self.llm.with_structured_output(Plan, **structured_output_kwargs)
-        messages = [{"role": "system", "content": configuration.research_plan_system_prompt}] + state.messages
-        response = cast(Plan, await model.ainvoke(messages, {"tags": ["langsmith:nostream"]}))
-        return {
-            "steps": response["steps"],
-            "documents": "delete",
-            "query": state.messages[-1].content,
-        }
+        model = self.llm.with_structured_output(Response, **structured_output_kwargs)
+        messages = [
+            {"role": "system", "content": configuration.generate_queries_system_prompt},
+            {"role": "human", "content": state.question},
+        ]
+        response = cast(Response, await model.ainvoke(messages, {"tags": ["langsmith:nostream"]}))
+        return {"queries": response["queries"]}
 
-    async def _conduct_research(self, state: AgentState) -> dict[str, Any]:
-        """Execute the first step of the research plan.
+    async def _retrieve_documents(self, state: QueryState, *, config: RunnableConfig) -> dict[str, list[Document]]:
+        """Retrieve documents based on a given query.
 
-        This function takes the first step from the research plan and uses it to conduct research.
+        This function uses a retriever to fetch relevant documents for a given query.
 
         Args:
-            state (AgentState): The current state of the agent, including the research plan steps.
+            state (QueryState): The current state containing the query string.
+            config (RunnableConfig): Configuration with the retriever used to fetch documents.
 
         Returns:
-            dict[str, list[str]]: A dictionary with 'documents' containing the research results and
-                                'steps' containing the remaining research steps.
+            dict[str, list[Document]]: A dictionary with a 'documents' key containing the list of retrieved documents.
+        """
+        with retrieval.make_retriever(config) as retriever:
+            response = await retriever.ainvoke(state.query, config)
+            return {"documents": response}
+
+    def _retrieve_in_parallel(self, state: ResearcherState) -> list[Send]:
+        """Create parallel retrieval tasks for each generated query.
+
+        This function prepares parallel document retrieval tasks for each query in the researcher's state.
+
+        Args:
+            state (ResearcherState): The current state of the researcher, including the generated queries.
+
+        Returns:
+            Literal["retrieve_documents"]: A list of Send objects, each representing a document retrieval task.
 
         Behavior:
-            - Invokes the researcher_graph with the first step of the research plan.
-            - Updates the state with the retrieved documents and removes the completed step.
+            - Creates a Send object for each query in the state.
+            - Each Send object targets the "retrieve_documents" node with the corresponding query.
         """
-        researcher_graph = await researcher_agent.create_graph()
-        result = await researcher_graph.ainvoke({"question": state.steps[0]})
-        return {"documents": result["documents"], "steps": state.steps[1:]}
-
-    def _check_finished(self, state: AgentState) -> Literal["respond", "conduct_research"]:
-        """Determine if the research process is complete or if more research is needed.
-
-        This function checks if there are any remaining steps in the research plan:
-            - If there are, route back to the `conduct_research` node
-            - Otherwise, route to the `respond` node
-
-        Args:
-            state (AgentState): The current state of the agent, including the remaining research steps.
-
-        Returns:
-            Literal["respond", "conduct_research"]: The next step to take based on whether research is complete.
-        """
-        if len(state.steps or []) > 0:
-            return "conduct_research"
-        else:
-            return "respond"
-
-    async def _respond(self, state: AgentState, *, config: RunnableConfig) -> dict[str, list[BaseMessage]]:
-        """Generate a final response to the user's query based on the conducted research.
-
-        This function formulates a comprehensive answer using the conversation history and the documents retrieved by the researcher.
-
-        Args:
-            state (AgentState): The current state of the agent, including retrieved documents and conversation history.
-            config (RunnableConfig): Configuration with the model used to respond.
-
-        Returns:
-            dict[str, list[str]]: A dictionary with a 'messages' key containing the generated response.
-        """
-        configuration = AgentConfiguration.from_runnable_config(config)
-        # TODO: add a re-ranker here
-        top_k = 20
-        context = format_docs(state.documents[:top_k])
-        prompt = configuration.response_system_prompt.format(context=context)
-        messages = [{"role": "system", "content": prompt}] + state.messages
-        response = await self.llm.ainvoke(messages)
-        return {"messages": [response], "answer": response.content}
+        return [Send("retrieve_documents", QueryState(query=query)) for query in state.queries]
 
     async def create_graph(self) -> Optional[CompiledStateGraph]:
         """Create and configure the LangGraph workflow.
@@ -208,15 +184,17 @@ class LangGraphAgent:
         """
         if self._graph is None:
             try:
-                graph_builder = StateGraph(AgentState, input=InputState, config_schema=AgentConfiguration)
-                graph_builder.add_node("create_research_plan", self._create_research_plan)
-                graph_builder.add_node("conduct_research", self._conduct_research)
-                graph_builder.add_node("respond", self._respond)
+                graph_builder = StateGraph(ResearcherState)
+                graph_builder.add_node("generate_queries", self._generate_queries)
+                graph_builder.add_node("retrieve_documents", self._retrieve_documents)
 
-                graph_builder.add_edge(START, "create_research_plan")
-                graph_builder.add_edge("create_research_plan", "conduct_research")
-                graph_builder.add_conditional_edges("conduct_research", self._check_finished)
-                graph_builder.add_edge("respond", END)
+                graph_builder.add_edge(START, "generate_queries")
+                graph_builder.add_conditional_edges(
+                    "generate_queries",
+                    self._retrieve_in_parallel,  # type: ignore
+                    path_map=["retrieve_documents"],
+                )
+                graph_builder.add_edge("retrieve_documents", END)
 
                 # Get connection pool (may be None in production if DB unavailable)
                 connection_pool = await self._get_connection_pool()
@@ -229,11 +207,11 @@ class LangGraphAgent:
                     if settings.ENVIRONMENT != Environment.PRODUCTION:
                         raise Exception("Connection pool initialization failed")
 
-                self._graph = graph_builder.compile(checkpointer=checkpointer, name="RetrievalGraph")
+                self._graph = graph_builder.compile(checkpointer=checkpointer, name="ResearcherGraph")
 
                 logger.info(
                     "graph_created",
-                    graph_name="RetrievalGraph",
+                    graph_name="ResearcherGraph",
                     environment=settings.ENVIRONMENT.value,
                     has_checkpointer=checkpointer is not None,
                 )

@@ -116,12 +116,13 @@ class CustomMongoDocumentManager(MongoDocumentManager):
 
 def ingest_docs():
     vs_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY)
+    embedding_model = make_text_encoder(settings.EMBEDDING_MODEL)
     vectorstore = QdrantVectorStore.from_existing_collection(
         url=settings.QDRANT_URL,
         api_key=settings.QDRANT_API_KEY,
         collection_name=settings.QDRANT_COLLECTION_NAME,
         # prefer_grpc=True,
-        embedding=make_text_encoder(settings.EMBEDDING_MODEL),
+        embedding=embedding_model,
     )
 
     record_manager = CustomMongoDocumentManager(
