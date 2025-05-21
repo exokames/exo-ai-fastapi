@@ -25,7 +25,7 @@ def make_qdrant_retriever(
         # prefer_grpc=True,
         embedding=embedding_model,
     )
-    search_kwargs = {**configuration.search_kwargs, "return_uuids": True}
+    search_kwargs = {**configuration.search_kwargs}
     yield store.as_retriever(search_kwargs=search_kwargs)
 
 
