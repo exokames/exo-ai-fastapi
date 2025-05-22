@@ -126,6 +126,22 @@ docker-compose-logs:
 	fi
 	APP_ENV=$(ENV) docker-compose logs -f
 
+#  Ava App
+ava-build:
+	docker compose build
+
+ava-run:
+	docker compose up --build -d
+
+ava-stop:
+	docker compose stop
+
+ava-delete:
+	@if [ -d "long_term_memory" ]; then rm -rf long_term_memory; fi
+	@if [ -d "short_term_memory" ]; then rm -rf short_term_memory; fi
+	@if [ -d "generated_images" ]; then rm -rf generated_images; fi
+	docker compose down
+
 # Help
 help:
 	@echo "Usage: make <target>"

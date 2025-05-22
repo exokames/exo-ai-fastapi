@@ -56,7 +56,6 @@ class LangGraphAgent:
         self.llm = ChatOpenAI(
             model=settings.LLM_MODEL,
             temperature=settings.DEFAULT_LLM_TEMPERATURE,
-            api_key=settings.LLM_API_KEY,
             max_tokens=settings.MAX_TOKENS,
             **self._get_model_kwargs(),
         ).bind_tools(tools)

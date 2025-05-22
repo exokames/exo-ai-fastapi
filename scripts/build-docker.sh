@@ -47,7 +47,7 @@ echo "API keys: ******** (masked for security)"
 docker build --no-cache \
     --build-arg APP_ENV="$ENV" \
     --build-arg POSTGRES_URL="$POSTGRES_URL" \
-    --build-arg LLM_API_KEY="$LLM_API_KEY" \
+    --build-arg OPENAI_API_KEY="$OPENAI_API_KEY" \
     --build-arg JWT_SECRET_KEY="$JWT_SECRET_KEY" \
     -t exo-ai:"$ENV" .
 

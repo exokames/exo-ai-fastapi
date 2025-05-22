@@ -39,7 +39,10 @@ RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
 # Create log directory
-RUN mkdir -p /app/logs
+# RUN mkdir -p /app/logs
+
+# Define volumes
+VOLUME ["/app/data", "/app/logs"]
 
 # Default port
 EXPOSE 8000

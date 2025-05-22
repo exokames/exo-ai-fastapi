@@ -133,11 +133,15 @@ class Settings:
         self.ALLOWED_ORIGINS = parse_list_from_env("ALLOWED_ORIGINS", ["*"])
 
         # LangGraph Configuration
-        self.LLM_API_KEY = os.getenv("LLM_API_KEY", "")
         self.LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
         self.DEFAULT_LLM_TEMPERATURE = float(os.getenv("DEFAULT_LLM_TEMPERATURE", "0.2"))
         self.MAX_TOKENS = int(os.getenv("MAX_TOKENS", "2000"))
         self.MAX_LLM_CALL_RETRIES = int(os.getenv("MAX_LLM_CALL_RETRIES", "3"))
+
+        self.GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+        self.ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
+        self.ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "")
+        self.TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY", "")
 
         # JWT Configuration
         self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
@@ -180,7 +184,7 @@ class Settings:
         # Evaluation Configuration
         self.EVALUATION_LLM = os.getenv("EVALUATION_LLM", "gpt-4o-mini")
         self.EVALUATION_BASE_URL = os.getenv("EVALUATION_BASE_URL", "https://api.openai.com/v1")
-        self.EVALUATION_API_KEY = os.getenv("EVALUATION_API_KEY", self.LLM_API_KEY)
+        # self.EVALUATION_API_KEY = os.getenv("EVALUATION_API_KEY", self.LLM_API_KEY)
         self.EVALUATION_SLEEP_TIME = int(os.getenv("EVALUATION_SLEEP_TIME", "10"))
 
         # Qdrant Configuration
@@ -196,6 +200,19 @@ class Settings:
         self.RESTAURANT_DOCS_PATH = os.getenv("RESTAURANT_DOCS_PATH", "")
         self.PRODUCT_DOCS_PATH = os.getenv("PRODUCT_DOCS_PATH", "")
         self.EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "vertexai/text-embedding-004")
+
+        self.TEXT_MODEL_NAME = "gemini-2.0-flash"
+        self.STT_MODEL_NAME = "whisper-large-v3-turbo"
+        self.TTS_MODEL_NAME = "eleven_flash_v2_5"
+        self.TTI_MODEL_NAME = "black-forest-labs/FLUX.1-schnell-Free"
+        self.VISION_MODEL_NAME = "llama-3.2-90b-vision-preview"
+
+        self.MEMORY_TOP_K = 3
+        self.ROUTER_MESSAGES_TO_ANALYZE = 3
+        self.TOTAL_MESSAGES_SUMMARY_TRIGGER = 20
+        self.TOTAL_MESSAGES_AFTER_SUMMARY = 5
+
+        self.SHORT_TERM_MEMORY_DB_PATH = "/app/data/memory.db"
 
         # Apply environment-specific settings
         self.apply_environment_settings()
