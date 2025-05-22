@@ -8,8 +8,8 @@ from fastapi import APIRouter, Request, Response
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
+from app.ai_companion.graph import graph_builder
 from app.core.config import settings
-from app.graph import graph_builder
 from app.modules.image import ImageToText
 from app.modules.speech import SpeechToText, TextToSpeech
 

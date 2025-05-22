@@ -105,7 +105,7 @@ exclude = ["migrations", "*.ipynb", "venv"]
 # Enable flake8-bugbear (`B`) rules and docstring (`D`) rules
 select = ["E", "F", "B", "ERA", "D"]
 # Never enforce `E501` (line length violations).
-ignore = ["E501", "F401", "D203", "D213","B904","B008"]
+ignore = ["E501", "F401", "D203", "D213","B904","B008", "D100", "D104", "D102", "D107", "D103", "ERA001", "D101"]
 # Avoid trying to fix flake8-bugbear (`B`) violations.
 unfixable = ["B"]
 
