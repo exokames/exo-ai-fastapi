@@ -141,7 +141,6 @@ class Settings:
         self.GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
         self.ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
         self.ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "")
-        self.TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY", "")
 
         # JWT Configuration
         self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
@@ -199,12 +198,13 @@ class Settings:
         # Ingest Configuration
         self.RESTAURANT_DOCS_PATH = os.getenv("RESTAURANT_DOCS_PATH", "")
         self.PRODUCT_DOCS_PATH = os.getenv("PRODUCT_DOCS_PATH", "")
-        self.EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "vertexai/text-embedding-004")
+        self.EMBEDDING_MODEL = "vertexai/text-embedding-004"
 
+        # Modules Configuration
         self.TEXT_MODEL_NAME = "gemini-2.0-flash"
         self.STT_MODEL_NAME = "whisper-large-v3-turbo"
         self.TTS_MODEL_NAME = "eleven_flash_v2_5"
-        self.TTI_MODEL_NAME = "black-forest-labs/FLUX.1-schnell-Free"
+        self.TTI_MODEL_NAME = "imagen-4.0-generate-preview-05-20"
         self.VISION_MODEL_NAME = "llama-3.2-90b-vision-preview"
 
         self.MEMORY_TOP_K = 3
@@ -213,6 +213,9 @@ class Settings:
         self.TOTAL_MESSAGES_AFTER_SUMMARY = 5
 
         self.SHORT_TERM_MEMORY_DB_PATH = "/app/data/memory.db"
+
+        self.PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "exo-genai")
+        self.LOCATION = os.getenv("GOOGLE_CLOUD_REGION", "us-central1")
 
         # Apply environment-specific settings
         self.apply_environment_settings()

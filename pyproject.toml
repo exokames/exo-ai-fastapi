@@ -38,6 +38,7 @@ dependencies = [
     "motor>=3.7.1",
     "elevenlabs>=2.0.0",
     "groq>=0.25.0",
+    "google-genai>=1.16.1",
 ]
 
 [project.optional-dependencies]

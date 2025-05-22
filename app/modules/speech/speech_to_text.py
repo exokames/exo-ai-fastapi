@@ -59,7 +59,7 @@ class SpeechToText:
                 with open(temp_file_path, "rb") as audio_file:
                     transcription = self.client.audio.transcriptions.create(
                         file=audio_file,
-                        model="whisper-large-v3-turbo",
+                        model=settings.STT_MODEL_NAME,
                         language="en",
                         response_format="text",
                     )
