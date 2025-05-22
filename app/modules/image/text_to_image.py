@@ -14,14 +14,14 @@ from app.core.prompts.prompts import IMAGE_ENHANCEMENT_PROMPT, IMAGE_SCENARIO_PR
 
 
 class ScenarioPrompt(BaseModel):
-    """Class for the scenario response"""
+    """Class for the scenario response."""
 
     narrative: str = Field(..., description="The AI's narrative response to the question")
     image_prompt: str = Field(..., description="The visual prompt to generate an image representing the scene")
 
 
 class EnhancedPrompt(BaseModel):
-    """Class for the text prompt"""
+    """Class for the text prompt."""
 
     content: str = Field(
         ...,

@@ -31,7 +31,6 @@ WHATSAPP_PHONE_NUMBER_ID = os.getenv("WHATSAPP_PHONE_NUMBER_ID")
 @router.api_route("/whatsapp_response", methods=["GET", "POST"])
 async def whatsapp_handler(request: Request) -> Response:
     """Handles incoming messages and status updates from the WhatsApp Cloud API."""
-
     if request.method == "GET":
         params = request.query_params
         if params.get("hub.verify_token") == os.getenv("WHATSAPP_VERIFY_TOKEN"):

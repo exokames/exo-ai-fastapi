@@ -12,6 +12,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./logs:/app/logs
+      - ./short_term_memory:/app/data
     env_file:
       - .env.${APP_ENV:-development}
     environment:
@@ -19,6 +20,10 @@ services:
       # Pass sensitive variables at runtime
       - OPENAI_API_KEY=${OPENAI_API_KEY:-dummy-key-for-development}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-supersecretkeythatshouldbechangedforproduction}
+      - QDRANT_PORT=6333
+      - QDRANT_API_KEY=None
+      - QDRANT_HOST=localhost
+      - QDRANT_URL=http://qdrant:6333      
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -26,6 +31,8 @@ services:
       retries: 3
       start_period: 10s
     restart: on-failure
+    depends_on:
+      - qdrant    
     networks:
       - monitoring
 
@@ -35,7 +42,7 @@ services:
       - "6333:6333"
     volumes:
       - ./long_term_memory:/qdrant/storage
-    restart: unless-stopped
+    restart: on-failure
     networks:
       - monitoring
 
@@ -44,7 +51,7 @@ services:
       context: .
       dockerfile: Dockerfile.chainlit
     ports:
-      - "8000:8000"
+      - "8001:8001"
     env_file:
       - .env.${APP_ENV:-development}
     environment:
@@ -52,28 +59,7 @@ services:
       - QDRANT_API_KEY=None
       - QDRANT_HOST=localhost
       - QDRANT_URL=http://qdrant:6333
-    restart: unless-stopped
-    volumes: 
-      - ./short_term_memory:/app/data
-    depends_on:
-      - qdrant
-    networks:
-      - monitoring
-
-  whatsapp:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env.${APP_ENV:-development}
-    environment:
-      - QDRANT_PORT=6333
-      - QDRANT_API_KEY=None
-      - QDRANT_HOST=localhost
-      - QDRANT_URL=http://qdrant:6333
-    restart: unless-stopped
+    restart: on-failure
     volumes: 
       - ./short_term_memory:/app/data
     depends_on:

@@ -1,5 +1,5 @@
 # Use an appropriate base image
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 
 # Install the project into `/app`
 WORKDIR /app
@@ -14,13 +14,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the dependency management files (lock file and pyproject.toml) first
-COPY uv.lock pyproject.toml README.md /app/
+COPY uv.lock pyproject.toml /app/
 
 # Install the application dependencies
 RUN uv sync --frozen --no-cache
 
 # Copy your application code into the container
-COPY src/ /app/
+COPY app/ /app/app/
 
 # Set the virtual environment environment variables
 ENV VIRTUAL_ENV=/app/.venv \
@@ -33,7 +33,7 @@ RUN uv pip install -e .
 VOLUME ["/app/data"]
 
 # Expose the port
-EXPOSE 8000
+EXPOSE 8001
 
 # Run the FastAPI app using uvicorn
-CMD ["chainlit", "run", "ai_companion/interfaces/chainlit/app.py", "--port", "8000", "--host", "0.0.0.0"]
+CMD ["/app/.venv/bin/chainlit", "run", "app/ai_companion/chainlit/app.py", "--port", "8001", "--host", "0.0.0.0"]

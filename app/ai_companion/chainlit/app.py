@@ -17,14 +17,14 @@ image_to_text = ImageToText()
 
 @cl.on_chat_start
 async def on_chat_start():
-    """Initialize the chat session"""
+    """Initialize the chat session."""
     # thread_id = cl.user_session.get("id")
     cl.user_session.set("thread_id", 1)
 
 
 @cl.on_message
 async def on_message(message: cl.Message):
-    """Handle text messages and images"""
+    """Handle text messages and images."""
     msg = cl.Message(content="")
 
     # Process any attached images
@@ -83,7 +83,7 @@ async def on_message(message: cl.Message):
 
 @cl.on_audio_chunk
 async def on_audio_chunk(chunk: cl.AudioChunk):
-    """Handle incoming audio chunks"""
+    """Handle incoming audio chunks."""
     if chunk.isStart:
         buffer = BytesIO()
         buffer.name = f"input_audio.{chunk.mimeType.split('/')[1]}"
@@ -94,7 +94,7 @@ async def on_audio_chunk(chunk: cl.AudioChunk):
 
 @cl.on_audio_end
 async def on_audio_end(elements):
-    """Process completed audio input"""
+    """Process completed audio input."""
     # Get audio data
     audio_buffer = cl.user_session.get("audio_buffer")
     audio_buffer.seek(0)
