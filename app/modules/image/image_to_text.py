@@ -30,7 +30,7 @@ class ImageToText:
     def client(self) -> ChatGoogleGenerativeAI:
         """Get or create Google client instance using singleton pattern."""
         if self._client is None:
-            self._client = ChatGoogleGenerativeAI(model=settings.TEXT_MODEL_NAME)
+            self._client = ChatGoogleGenerativeAI(model=settings.TEXT_MODEL_NAME, max_output_tokens=1000)
         return self._client
 
     async def analyze_image(self, image_data: Union[str, bytes], prompt: str = "") -> str:

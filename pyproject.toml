@@ -39,6 +39,7 @@ dependencies = [
     "elevenlabs>=2.0.0",
     "groq>=0.25.0",
     "google-genai>=1.16.1",
+    "langgraph-checkpoint-sqlite>=2.0.10",
 ]
 
 [project.optional-dependencies]
