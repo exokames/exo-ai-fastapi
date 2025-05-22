@@ -51,7 +51,7 @@ clean:
 	rm -rf .pytest_cache
 
 docker-build:
-	docker build -t fastapi-langgraph-template .
+	docker build -t exo-ai .
 
 docker-build-env:
 	@if [ -z "$(ENV)" ]; then \
@@ -65,7 +65,7 @@ docker-build-env:
 	@./scripts/build-docker.sh $(ENV)
 
 docker-run:
-	docker run -p 8000:8000 fastapi-langgraph-template
+	docker run -p 8000:8000 exo-ai
 
 docker-run-env:
 	@if [ -z "$(ENV)" ]; then \

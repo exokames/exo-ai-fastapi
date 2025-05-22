@@ -1,7 +1,7 @@
 [project]
-name = "langgraph-fastapi-template"
+name = "exo-ai"
 version = "0.1.0"
-description = "LangGraph FastAPI Template"
+description = "Exo AI"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

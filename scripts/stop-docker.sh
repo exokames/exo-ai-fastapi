@@ -17,7 +17,7 @@ if [[ ! "$ENV" =~ ^(development|staging|production)$ ]]; then
     exit 1
 fi
 
-CONTAINER_NAME="fastapi-langgraph-$ENV"
+CONTAINER_NAME="exo-ai-$ENV"
 
 echo "Stopping container for $ENV environment"
 

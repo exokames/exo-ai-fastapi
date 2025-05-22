@@ -30,7 +30,7 @@ jobs:
       - name: Build Image
         run: |
           make docker-build-env ENV=production
-          docker tag fastapi-langgraph-template:production ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:production
+          docker tag exo-ai:production ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:production
 
       - name: Log in to Docker Hub
         run: |

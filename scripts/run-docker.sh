@@ -17,8 +17,8 @@ if [[ ! "$ENV" =~ ^(development|staging|production)$ ]]; then
   exit 1
 fi
 
-CONTAINER_NAME="fastapi-langgraph-$ENV"
-IMAGE_NAME="fastapi-langgraph-template:$ENV"
+CONTAINER_NAME="exo-ai-$ENV"
+IMAGE_NAME="exo-ai:$ENV"
 
 echo "Starting Docker container for $ENV environment"
 
