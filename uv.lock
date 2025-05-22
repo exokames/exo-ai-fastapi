@@ -96,15 +96,6 @@ wheels = [
 ]
 
 [[package]]
-name = "backoff"
-version = "2.2.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/47/d7/5bbeb12c44d7c4f2fb5b56abce497eb5ed9f34d85701de869acedd602619/backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba", size = 17001 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/df/73/b6e24bd22e6720ca8ee9a85a0c4a2971af8497d8f3193fa05390cbd46e09/backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8", size = 15148 },
-]
-
-[[package]]
 name = "bcrypt"
 version = "4.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -417,6 +408,105 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/48/ce/13508a1ec3f8bb981ae4ca79ea40384becc868bfae97fd1c942bb3a001b1/email_validator-2.2.0.tar.gz", hash = "sha256:cb690f344c617a714f22e66ae771445a1ceb46821152df8e165c5f9a364582b7", size = 48967 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d7/ee/bf0adb559ad3c786f12bcbc9296b3f5675f529199bef03e2df281fa1fadb/email_validator-2.2.0-py3-none-any.whl", hash = "sha256:561977c2d73ce3611850a06fa56b414621e0c8faa9d66f2611407d87465da631", size = 33521 },
+]
+
+[[package]]
+name = "exo-ai"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "asgiref" },
+    { name = "bcrypt" },
+    { name = "colorama" },
+    { name = "email-validator" },
+    { name = "fastapi" },
+    { name = "langchain" },
+    { name = "langchain-community" },
+    { name = "langchain-core" },
+    { name = "langchain-google-genai" },
+    { name = "langchain-openai" },
+    { name = "langchain-qdrant" },
+    { name = "langchain-tavily" },
+    { name = "langgraph" },
+    { name = "langgraph-checkpoint-postgres" },
+    { name = "motor" },
+    { name = "passlib", extra = ["bcrypt"] },
+    { name = "prometheus-client" },
+    { name = "psycopg2-binary" },
+    { name = "pydantic", extra = ["email"] },
+    { name = "pydantic-settings" },
+    { name = "pymongo" },
+    { name = "python-dotenv" },
+    { name = "python-jose", extra = ["cryptography"] },
+    { name = "python-multipart" },
+    { name = "slowapi" },
+    { name = "sqlmodel" },
+    { name = "starlette-prometheus" },
+    { name = "structlog" },
+    { name = "supabase" },
+    { name = "tqdm" },
+    { name = "uvicorn" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "black" },
+    { name = "djlint" },
+    { name = "flake8" },
+    { name = "isort" },
+    { name = "ruff" },
+]
+
+[package.dev-dependencies]
+test = [
+    { name = "httpx" },
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "asgiref", specifier = ">=3.8.1" },
+    { name = "bcrypt", specifier = ">=4.3.0" },
+    { name = "black", marker = "extra == 'dev'" },
+    { name = "colorama", specifier = ">=0.4.6" },
+    { name = "djlint", marker = "extra == 'dev'", specifier = "==1.36.4" },
+    { name = "email-validator", specifier = ">=2.2.0" },
+    { name = "fastapi", specifier = ">=0.115.12" },
+    { name = "flake8", marker = "extra == 'dev'" },
+    { name = "isort", marker = "extra == 'dev'" },
+    { name = "langchain", specifier = ">=0.3.25" },
+    { name = "langchain-community", specifier = ">=0.3.20" },
+    { name = "langchain-core", specifier = ">=0.3.58" },
+    { name = "langchain-google-genai", specifier = ">=2.1.4" },
+    { name = "langchain-openai", specifier = ">=0.3.16" },
+    { name = "langchain-qdrant", specifier = ">=0.2.0" },
+    { name = "langchain-tavily", specifier = ">=0.1.6" },
+    { name = "langgraph", specifier = ">=0.4.1" },
+    { name = "langgraph-checkpoint-postgres", specifier = ">=2.0.19" },
+    { name = "motor", specifier = ">=3.7.1" },
+    { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },
+    { name = "prometheus-client", specifier = ">=0.19.0" },
+    { name = "psycopg2-binary", specifier = ">=2.9.10" },
+    { name = "pydantic", extras = ["email"], specifier = ">=2.11.1" },
+    { name = "pydantic-settings", specifier = ">=2.8.1" },
+    { name = "pymongo", specifier = ">=4.13.0" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
+    { name = "python-jose", extras = ["cryptography"], specifier = ">=3.4.0" },
+    { name = "python-multipart", specifier = ">=0.0.20" },
+    { name = "ruff", marker = "extra == 'dev'" },
+    { name = "slowapi", specifier = ">=0.1.9" },
+    { name = "sqlmodel", specifier = ">=0.0.24" },
+    { name = "starlette-prometheus", specifier = ">=0.7.0" },
+    { name = "structlog", specifier = ">=25.2.0" },
+    { name = "supabase", specifier = ">=2.15.0" },
+    { name = "tqdm", specifier = ">=4.67.1" },
+    { name = "uvicorn", specifier = ">=0.34.0" },
+]
+
+[package.metadata.requires-dev]
+test = [
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "pytest", specifier = ">=8.3.5" },
 ]
 
 [[package]]
@@ -920,25 +1010,6 @@ wheels = [
 ]
 
 [[package]]
-name = "langfuse"
-version = "2.60.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "backoff" },
-    { name = "httpx" },
-    { name = "idna" },
-    { name = "packaging" },
-    { name = "pydantic" },
-    { name = "requests" },
-    { name = "wrapt" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/06/54/8f7888631843e1b8af9c96a021f7913068af8972d9dfa9ffdcda7774c3b5/langfuse-2.60.2.tar.gz", hash = "sha256:b63cba99c24358b3ec4bde63fb76c2825d162c4f5670862e6be43b9dafb530d9", size = 152439 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/06/64/58eb43a7a21e0aeabb004703834b242f1538e0daac1058a3b6f8b5f1d110/langfuse-2.60.2-py3-none-any.whl", hash = "sha256:749c875b808a386fe4608f6ffa44474bb6f984b3a510596e1fb1a49f8c973064", size = 274986 },
-]
-
-[[package]]
 name = "langgraph"
 version = "0.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -981,107 +1052,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/38/3c/2756de1b24344fbd49a57eaea7d1ab226660c6e7c24bd8b52f5c815c209d/langgraph_checkpoint_postgres-2.0.19.tar.gz", hash = "sha256:a4ccff1b07685774af58e6057b8516bd50cf7fa6df1271c2ec26b345f0dac2ed", size = 30557 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/56/d0/b465db97df319364fa754bcd07d9258f5f2f75da9fd4a5ee18b290f3c90a/langgraph_checkpoint_postgres-2.0.19-py3-none-any.whl", hash = "sha256:62c08a21e9cd677469ca8f7bd94df782d8d9099cfe60e90ab828e479d62861e1", size = 39069 },
-]
-
-[[package]]
-name = "langgraph-fastapi-template"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "asgiref" },
-    { name = "bcrypt" },
-    { name = "colorama" },
-    { name = "email-validator" },
-    { name = "fastapi" },
-    { name = "langchain" },
-    { name = "langchain-community" },
-    { name = "langchain-core" },
-    { name = "langchain-google-genai" },
-    { name = "langchain-openai" },
-    { name = "langchain-qdrant" },
-    { name = "langchain-tavily" },
-    { name = "langfuse" },
-    { name = "langgraph" },
-    { name = "langgraph-checkpoint-postgres" },
-    { name = "motor" },
-    { name = "passlib", extra = ["bcrypt"] },
-    { name = "prometheus-client" },
-    { name = "psycopg2-binary" },
-    { name = "pydantic", extra = ["email"] },
-    { name = "pydantic-settings" },
-    { name = "pymongo" },
-    { name = "python-dotenv" },
-    { name = "python-jose", extra = ["cryptography"] },
-    { name = "python-multipart" },
-    { name = "slowapi" },
-    { name = "sqlmodel" },
-    { name = "starlette-prometheus" },
-    { name = "structlog" },
-    { name = "supabase" },
-    { name = "tqdm" },
-    { name = "uvicorn" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "black" },
-    { name = "djlint" },
-    { name = "flake8" },
-    { name = "isort" },
-    { name = "ruff" },
-]
-
-[package.dev-dependencies]
-test = [
-    { name = "httpx" },
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "asgiref", specifier = ">=3.8.1" },
-    { name = "bcrypt", specifier = ">=4.3.0" },
-    { name = "black", marker = "extra == 'dev'" },
-    { name = "colorama", specifier = ">=0.4.6" },
-    { name = "djlint", marker = "extra == 'dev'", specifier = "==1.36.4" },
-    { name = "email-validator", specifier = ">=2.2.0" },
-    { name = "fastapi", specifier = ">=0.115.12" },
-    { name = "flake8", marker = "extra == 'dev'" },
-    { name = "isort", marker = "extra == 'dev'" },
-    { name = "langchain", specifier = ">=0.3.25" },
-    { name = "langchain-community", specifier = ">=0.3.20" },
-    { name = "langchain-core", specifier = ">=0.3.58" },
-    { name = "langchain-google-genai", specifier = ">=2.1.4" },
-    { name = "langchain-openai", specifier = ">=0.3.16" },
-    { name = "langchain-qdrant", specifier = ">=0.2.0" },
-    { name = "langchain-tavily", specifier = ">=0.1.6" },
-    { name = "langfuse", specifier = ">=2.60.2" },
-    { name = "langgraph", specifier = ">=0.4.1" },
-    { name = "langgraph-checkpoint-postgres", specifier = ">=2.0.19" },
-    { name = "motor", specifier = ">=3.7.1" },
-    { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },
-    { name = "prometheus-client", specifier = ">=0.19.0" },
-    { name = "psycopg2-binary", specifier = ">=2.9.10" },
-    { name = "pydantic", extras = ["email"], specifier = ">=2.11.1" },
-    { name = "pydantic-settings", specifier = ">=2.8.1" },
-    { name = "pymongo", specifier = ">=4.13.0" },
-    { name = "python-dotenv", specifier = ">=1.1.0" },
-    { name = "python-jose", extras = ["cryptography"], specifier = ">=3.4.0" },
-    { name = "python-multipart", specifier = ">=0.0.20" },
-    { name = "ruff", marker = "extra == 'dev'" },
-    { name = "slowapi", specifier = ">=0.1.9" },
-    { name = "sqlmodel", specifier = ">=0.0.24" },
-    { name = "starlette-prometheus", specifier = ">=0.7.0" },
-    { name = "structlog", specifier = ">=25.2.0" },
-    { name = "supabase", specifier = ">=2.15.0" },
-    { name = "tqdm", specifier = ">=4.67.1" },
-    { name = "uvicorn", specifier = ">=0.34.0" },
-]
-
-[package.metadata.requires-dev]
-test = [
-    { name = "httpx", specifier = ">=0.28.1" },
-    { name = "pytest", specifier = ">=8.3.5" },
 ]
 
 [[package]]

@@ -11,8 +11,6 @@ from datetime import (
 from time import sleep
 
 import openai
-from langfuse import Langfuse
-from langfuse.api.resources.commons.types.trace_with_details import TraceWithDetails
 from tqdm import tqdm
 
 # Fix import path for app module

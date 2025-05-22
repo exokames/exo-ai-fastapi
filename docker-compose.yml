@@ -18,8 +18,6 @@ services:
       - APP_ENV=${APP_ENV:-development}
       # Pass sensitive variables at runtime
       - LLM_API_KEY=${LLM_API_KEY:-dummy-key-for-development}
-      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-}
-      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY:-}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-supersecretkeythatshouldbechangedforproduction}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]

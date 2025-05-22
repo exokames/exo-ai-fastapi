@@ -8,7 +8,6 @@ A production-ready FastAPI template for building AI agent applications with Lang
 
   - FastAPI for high-performance async API endpoints
   - LangGraph integration for AI agent workflows
-  - Langfuse for LLM observability and monitoring
   - Structured logging with environment-specific formatting
   - Rate limiting with configurable rules
   - PostgreSQL for data persistence
@@ -33,7 +32,6 @@ A production-ready FastAPI template for building AI agent applications with Lang
 
 - **Model Evaluation Framework**
   - Automated metric-based evaluation of model outputs
-  - Integration with Langfuse for trace analysis
   - Detailed JSON reports with success/failure metrics
   - Interactive command-line interface
   - Customizable evaluation metrics
@@ -138,7 +136,7 @@ The Docker setup includes:
 
 ## 📊 Model Evaluation
 
-The project includes a robust evaluation framework for measuring and tracking model performance over time. The evaluator automatically fetches traces from Langfuse, applies evaluation metrics, and generates detailed reports.
+The project includes a robust evaluation framework for measuring and tracking model performance over time. The evaluator automatically fetches traces, applies evaluation metrics, and generates detailed reports.
 
 ### Running Evaluations
 

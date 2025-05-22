@@ -15,7 +15,6 @@ from langchain_core.messages import (
     convert_to_openai_messages,
 )
 from langchain_openai import ChatOpenAI
-from langfuse.callback import CallbackHandler
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import (
     END,
@@ -25,13 +24,14 @@ from langgraph.graph.state import CompiledStateGraph
 from langgraph.types import StateSnapshot
 from openai import OpenAIError
 from psycopg_pool import AsyncConnectionPool
-from app.core.metrics import llm_inference_duration_seconds 
+
 from app.core.config import (
     Environment,
     settings,
 )
 from app.core.langgraph.tools import tools
 from app.core.logging import logger
+from app.core.metrics import llm_inference_duration_seconds
 from app.core.prompts import SYSTEM_PROMPT
 from app.schemas import (
     GraphState,
@@ -270,8 +270,8 @@ class LangGraphAgent:
 
         Args:
             messages (list[Message]): The messages to send to the LLM.
-            session_id (str): The session ID for Langfuse tracking.
-            user_id (Optional[str]): The user ID for Langfuse tracking.
+            session_id (str): The session ID for tracking.
+            user_id (Optional[str]): The user ID for tracking.
 
         Returns:
             list[dict]: The response from the LLM.
@@ -280,14 +280,6 @@ class LangGraphAgent:
             self._graph = await self.create_graph()
         config = {
             "configurable": {"thread_id": session_id},
-            "callbacks": [
-                CallbackHandler(
-                    environment=settings.ENVIRONMENT.value,
-                    debug=False,
-                    user_id=user_id,
-                    session_id=session_id,
-                )
-            ],
         }
         try:
             response = await self._graph.ainvoke(

@@ -17,7 +17,6 @@ from fastapi import (
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from langfuse import Langfuse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -31,13 +30,6 @@ from app.services.database import database_service
 
 # Load environment variables
 load_dotenv()
-
-# Initialize Langfuse
-# langfuse = Langfuse(
-#     public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
-#     secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
-#     host=os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
-# )
 
 
 @asynccontextmanager
