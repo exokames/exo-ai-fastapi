@@ -110,7 +110,7 @@ docker-compose-up:
 		echo "ENV is not valid. Must be one of: development, staging, production"; \
 		exit 1; \
 	fi
-	APP_ENV=$(ENV) docker-compose up -d
+	APP_ENV=$(ENV) docker-compose up --build -d
 
 docker-compose-down:
 	@if [ -z "$(ENV)" ]; then \
@@ -125,16 +125,6 @@ docker-compose-logs:
 		exit 1; \
 	fi
 	APP_ENV=$(ENV) docker-compose logs -f
-
-#  Ava App
-ava-build:
-	docker compose build
-
-ava-run:
-	docker compose up --build -d
-
-ava-stop:
-	docker compose stop
 
 ava-delete:
 	@if [ -d "long_term_memory" ]; then rm -rf long_term_memory; fi

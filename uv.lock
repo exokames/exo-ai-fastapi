@@ -420,7 +420,7 @@ wheels = [
 
 [[package]]
 name = "elevenlabs"
-version = "2.0.0"
+version = "1.50.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -430,9 +430,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d2/02/ffe56301c13a31777d7b40598e954c21121fcf1e2c5800ef0a3c54ed77f4/elevenlabs-2.0.0.tar.gz", hash = "sha256:5dac95ae75df67a29dd295750380cd340799661171da76bc9de91305ff21d0a1", size = 237008 }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/27/44aa5109e76ab41f4695fa1fbc5473e2d158fec89cedce2085520a9e0431/elevenlabs-1.50.3.tar.gz", hash = "sha256:fa6ad18be07f4b24106dd549cb97c9a72bb76fbb943ce9078a44d13abe3d3154", size = 101709 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d7/9e/51024e2f55af2846f575120eca7466098da69d49fce202e500ebb58e5399/elevenlabs-2.0.0-py3-none-any.whl", hash = "sha256:1914c7217356ab1abd6caeab4439ef58731b057c50572ed6e6600d86f0b7f0f2", size = 671145 },
+    { url = "https://files.pythonhosted.org/packages/48/43/77c7266f50b2e2eca5b155f15a35ef2a30cbd377d02a7f3ca32c077cb072/elevenlabs-1.50.3-py3-none-any.whl", hash = "sha256:13622d27f5ccd4c8bc793abbc252d43cdddc261805f378ae9a032a6458687589", size = 228427 },
 ]
 
 [[package]]
@@ -514,7 +514,7 @@ requires-dist = [
     { name = "chainlit", specifier = ">=0.1.0" },
     { name = "colorama", specifier = ">=0.4.6" },
     { name = "djlint", marker = "extra == 'dev'", specifier = "==1.36.4" },
-    { name = "elevenlabs", specifier = ">=2.0.0" },
+    { name = "elevenlabs", specifier = "==1.50.3" },
     { name = "email-validator", specifier = ">=2.2.0" },
     { name = "fastapi", specifier = ">=0.115.12" },
     { name = "flake8", marker = "extra == 'dev'" },

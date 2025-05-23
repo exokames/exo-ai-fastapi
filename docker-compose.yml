@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Single API service with dynamic environment
   app:
@@ -20,10 +18,8 @@ services:
       # Pass sensitive variables at runtime
       - OPENAI_API_KEY=${OPENAI_API_KEY:-dummy-key-for-development}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-supersecretkeythatshouldbechangedforproduction}
-      - QDRANT_PORT=6333
-      - QDRANT_API_KEY=None
-      - QDRANT_HOST=localhost
-      - QDRANT_URL=http://qdrant:6333      
+      # - QDRANT_API_KEY="xxx"
+      # - QDRANT_URL=http://qdrant:6333      
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -32,7 +28,8 @@ services:
       start_period: 10s
     restart: on-failure
     depends_on:
-      - qdrant    
+      - qdrant
+      - db
     networks:
       - monitoring
 
@@ -51,63 +48,74 @@ services:
       context: .
       dockerfile: Dockerfile.chainlit
     ports:
-      - "8001:8001"
+      - "8001:8000"
     env_file:
       - .env.${APP_ENV:-development}
-    environment:
-      - QDRANT_PORT=6333
-      - QDRANT_API_KEY=None
-      - QDRANT_HOST=localhost
-      - QDRANT_URL=http://qdrant:6333
     restart: on-failure
     volumes: 
       - ./short_term_memory:/app/data
     depends_on:
       - qdrant
+      - db
+    networks:
+      - monitoring
+      
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/pgdata
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=app
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: on-failure
     networks:
       - monitoring
 
   # Prometheus
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    networks:
-      - monitoring
-    restart: always
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #   networks:
+  #     - monitoring
+  #   restart: always
 
   # Grafana
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana-storage:/var/lib/grafana
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
-    networks:
-      - monitoring
-    restart: always
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - grafana-storage:/var/lib/grafana
+  #     - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+  #     - ./grafana/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #     - GF_USERS_ALLOW_SIGN_UP=false
+  #   networks:
+  #     - monitoring
+  #   restart: always
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    ports:
-      - "8080:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    networks:
-      - monitoring
-    restart: always
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:latest
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #   networks:
+  #     - monitoring
+  #   restart: always
 
 
 networks:
@@ -116,3 +124,4 @@ networks:
 
 volumes:
   grafana-storage: 
+  postgres-data:
