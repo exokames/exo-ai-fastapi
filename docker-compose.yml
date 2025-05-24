@@ -1,37 +1,37 @@
 services:
   # Single API service with dynamic environment
-  # app:
-  #   build:
-  #     context: .
-  #     args:
-  #       APP_ENV: ${APP_ENV:-development}
-  #   ports:
-  #     - "8000:8000"
-  #   volumes:
-  #     - ./app:/app/app
-  #     - ./logs:/app/logs
-  #     - ./short_term_memory:/app/data
-  #   env_file:
-  #     - .env.${APP_ENV:-development}
-  #   environment:
-  #     - APP_ENV=${APP_ENV:-development}
-  #     # Pass sensitive variables at runtime
-  #     - OPENAI_API_KEY=${OPENAI_API_KEY:-dummy-key-for-development}
-  #     - JWT_SECRET_KEY=${JWT_SECRET_KEY:-supersecretkeythatshouldbechangedforproduction}
-  #     # - QDRANT_API_KEY="xxx"
-  #     # - QDRANT_URL=http://qdrant:6333      
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #     start_period: 10s
-  #   restart: on-failure
-  #   depends_on:
-  #     - qdrant
-  #     - db
-  #   networks:
-  #     - monitoring
+  app:
+    build:
+      context: .
+      args:
+        APP_ENV: ${APP_ENV:-development}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+      - ./logs:/app/logs
+      - ./short_term_memory:/app/data
+    env_file:
+      - .env.${APP_ENV:-development}
+    environment:
+      - APP_ENV=${APP_ENV:-development}
+      # Pass sensitive variables at runtime
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-dummy-key-for-development}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-supersecretkeythatshouldbechangedforproduction}
+      # - QDRANT_API_KEY="xxx"
+      # - QDRANT_URL=http://qdrant:6333      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: on-failure
+    depends_on:
+      - qdrant
+      - db
+    networks:
+      - monitoring
 
   qdrant:
     image: qdrant/qdrant:latest

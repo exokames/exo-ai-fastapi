@@ -153,9 +153,6 @@ class Settings:
         self.TTS_MODEL_NAME = "eleven_flash_v2_5"
         self.ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "")
 
-        # self.GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-        # self.ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
-
         # Postgres Configuration
         self.POSTGRES_URL = os.getenv("POSTGRES_URL", "")
         self.POSTGRES_POOL_SIZE = int(os.getenv("POSTGRES_POOL_SIZE", "20"))
