@@ -18,8 +18,7 @@ services:
       # Pass sensitive variables at runtime
       - OPENAI_API_KEY=${OPENAI_API_KEY:-dummy-key-for-development}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-supersecretkeythatshouldbechangedforproduction}
-      # - QDRANT_API_KEY="xxx"
-      # - QDRANT_URL=http://qdrant:6333      
+      - GOOGLE_APPLICATION_CREDENTIALS=local-credentials-sk.json    
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
