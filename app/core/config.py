@@ -173,8 +173,7 @@ class Settings:
         self.QDRANT_COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME", "")
 
         # Sqlite Configuration
-        # self.SHORT_TERM_MEMORY_DB_PATH = "/app/data/memory.db"
-        self.SHORT_TERM_MEMORY_DB_PATH = "$(pwd)/app/data/memory.db"
+        self.SHORT_TERM_MEMORY_DB_PATH = os.getenv("SHORT_TERM_MEMORY_DB_PATH", "")
 
         # JWT Configuration
         self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
