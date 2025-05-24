@@ -105,7 +105,7 @@ class VectorStore:
         embedding = self.model.embed_query(text, task_type="RETRIEVAL_QUERY")
         point = PointStruct(
             id=metadata.get("id", hash(text)),
-            vector=embedding.tolist(),
+            vector=embedding,
             payload={
                 "text": text,
                 **metadata,
@@ -133,7 +133,7 @@ class VectorStore:
         query_embedding = self.model.embed_query(query, task_type="RETRIEVAL_QUERY")
         results = self.client.search(
             collection_name=self.COLLECTION_NAME,
-            query_vector=query_embedding.tolist(),
+            query_vector=query_embedding,
             limit=k,
         )
 

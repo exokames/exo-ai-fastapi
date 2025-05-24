@@ -51,9 +51,9 @@ class LangGraphAgent:
 
     def __init__(self):
         """Initialize the LangGraph Agent with necessary components."""
-        # Use environment-specific LLM model
+        self.model = "gpt-4o-mini"
         self.llm = ChatOpenAI(
-            model=settings.LLM_MODEL,
+            model=self.model,
             temperature=settings.DEFAULT_LLM_TEMPERATURE,
             max_tokens=settings.MAX_TOKENS,
             **self._get_model_kwargs(),
@@ -61,7 +61,7 @@ class LangGraphAgent:
         self._connection_pool: Optional[AsyncConnectionPool] = None
         self._graph: Optional[CompiledStateGraph] = None
 
-        logger.info("llm_initialized", model=settings.LLM_MODEL, environment=settings.ENVIRONMENT.value)
+        logger.info("llm_initialized", model=self.model, environment=settings.ENVIRONMENT.value)
 
     def _get_model_kwargs(self) -> Dict[str, Any]:
         """Get environment-specific model kwargs.

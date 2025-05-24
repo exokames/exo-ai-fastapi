@@ -70,8 +70,7 @@ class TextToImage:
                 prompt=prompt,
             )
 
-            # image_data = base64.b64decode(response.data[0].b64_json)
-            image_data = response.generated_images[0].image
+            image_data = response.generated_images[0].image.image_bytes
 
             if output_path:
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)

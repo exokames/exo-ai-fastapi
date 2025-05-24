@@ -28,7 +28,7 @@ class TextToSpeech:
     def client(self) -> ElevenLabs:
         """Get or create ElevenLabs client instance using singleton pattern."""
         if self._client is None:
-            self._client = ElevenLabs(api_key=settings.ELEVENLABS_API_KEY)
+            self._client = ElevenLabs()
         return self._client
 
     async def synthesize(self, text: str) -> bytes:

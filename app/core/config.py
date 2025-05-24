@@ -150,7 +150,6 @@ class Settings:
         self.TEXT_MODEL_NAME = "gemini-2.0-flash"
         self.STT_MODEL_NAME = "whisper-large-v3-turbo"
         self.TTI_MODEL_NAME = "imagen-4.0-generate-preview-05-20"
-        # self.VISION_MODEL_NAME = "llama-3.2-90b-vision-preview"
         self.TTS_MODEL_NAME = "eleven_flash_v2_5"
         self.ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "")
 
