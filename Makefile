@@ -126,10 +126,11 @@ docker-compose-logs:
 	fi
 	APP_ENV=$(ENV) docker-compose logs -f
 
-ava-delete:
+cleanup:
 	@if [ -d "long_term_memory" ]; then rm -rf long_term_memory; fi
 	@if [ -d "short_term_memory" ]; then rm -rf short_term_memory; fi
 	@if [ -d "generated_images" ]; then rm -rf generated_images; fi
+	@if [ -d "logs" ]; then rm -rf logs; fi
 	docker compose down
 
 # Help

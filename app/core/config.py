@@ -124,39 +124,66 @@ class Settings:
 
         # Application Settings
         self.PROJECT_NAME = os.getenv("PROJECT_NAME", "Exo AI")
+        self.DESCRIPTION = os.getenv("DESCRIPTION", "Exo AI project with LangGraph")
         self.VERSION = os.getenv("VERSION", "1.0.0")
-        self.DESCRIPTION = os.getenv("DESCRIPTION", "A production-ready Exo AI project with LangGraph")
-        self.API_V1_STR = os.getenv("API_V1_STR", "/api/v1")
         self.DEBUG = os.getenv("DEBUG", "false").lower() in ("true", "1", "t", "yes")
+        self.PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "exo-genai")
+        self.LOCATION = os.getenv("GOOGLE_CLOUD_REGION", "us-central1")
+
+        # API Settings
+        self.API_V1_STR = os.getenv("API_V1_STR", "/api/v1")
 
         # CORS Settings
         self.ALLOWED_ORIGINS = parse_list_from_env("ALLOWED_ORIGINS", ["*"])
 
-        # LangGraph Configuration
-        self.LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
+        # LangGraph Settings
         self.DEFAULT_LLM_TEMPERATURE = float(os.getenv("DEFAULT_LLM_TEMPERATURE", "0.2"))
         self.MAX_TOKENS = int(os.getenv("MAX_TOKENS", "2000"))
         self.MAX_LLM_CALL_RETRIES = int(os.getenv("MAX_LLM_CALL_RETRIES", "3"))
+        self.MEMORY_TOP_K = 3
+        self.ROUTER_MESSAGES_TO_ANALYZE = 3
+        self.TOTAL_MESSAGES_SUMMARY_TRIGGER = 20
+        self.TOTAL_MESSAGES_AFTER_SUMMARY = 5
 
-        self.GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-        self.ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
+        # Module Settings
+        self.EMBEDDING_MODEL = "vertexai/text-embedding-004"
+        self.TEXT_MODEL_NAME = "gemini-2.0-flash"
+        self.STT_MODEL_NAME = "whisper-large-v3-turbo"
+        self.TTI_MODEL_NAME = "imagen-4.0-generate-preview-05-20"
+        # self.VISION_MODEL_NAME = "llama-3.2-90b-vision-preview"
+        self.TTS_MODEL_NAME = "eleven_flash_v2_5"
         self.ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "")
 
-        # JWT Configuration
-        self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
-        self.JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-        self.JWT_ACCESS_TOKEN_EXPIRE_DAYS = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_DAYS", "30"))
-
-        # Logging Configuration
-        self.LOG_DIR = Path(os.getenv("LOG_DIR", "logs"))
-        self.LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-        self.LOG_FORMAT = os.getenv("LOG_FORMAT", "json")  # "json" or "console"
+        # self.GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+        # self.ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
 
         # Postgres Configuration
         self.POSTGRES_URL = os.getenv("POSTGRES_URL", "")
         self.POSTGRES_POOL_SIZE = int(os.getenv("POSTGRES_POOL_SIZE", "20"))
         self.POSTGRES_MAX_OVERFLOW = int(os.getenv("POSTGRES_MAX_OVERFLOW", "10"))
         self.CHECKPOINT_TABLES = ["checkpoint_blobs", "checkpoint_writes", "checkpoints"]
+
+        # MongoDB Configuration
+        self.ATLAS_URI = os.getenv("ATLAS_URI", "")
+        self.DBNAME = os.getenv("DBNAME", "")
+
+        # Qdrant Configuration
+        self.QDRANT_URL = os.getenv("QDRANT_URL", "")
+        self.QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
+        self.QDRANT_COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME", "")
+
+        # Sqlite Configuration
+        # self.SHORT_TERM_MEMORY_DB_PATH = "/app/data/memory.db"
+        self.SHORT_TERM_MEMORY_DB_PATH = "$(pwd)/app/data/memory.db"
+
+        # JWT Configuration
+        self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
+        self.JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+        self.JWT_ACCESS_TOKEN_EXPIRE_DAYS = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_DAYS", "30"))
+
+        # Ingest Configuration
+        self.RESTAURANT_DOCS_PATH = os.getenv("RESTAURANT_DOCS_PATH", "")
+        self.PRODUCT_DOCS_PATH = os.getenv("PRODUCT_DOCS_PATH", "")
 
         # Rate Limiting Configuration
         self.RATE_LIMIT_DEFAULT = parse_list_from_env("RATE_LIMIT_DEFAULT", ["200 per day", "50 per hour"])
@@ -180,42 +207,16 @@ class Settings:
             if value:
                 self.RATE_LIMIT_ENDPOINTS[endpoint] = value
 
+        # Logging Configuration
+        self.LOG_DIR = Path(os.getenv("LOG_DIR", "logs"))
+        self.LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+        self.LOG_FORMAT = os.getenv("LOG_FORMAT", "json")  # "json" or "console"
+
         # Evaluation Configuration
         self.EVALUATION_LLM = os.getenv("EVALUATION_LLM", "gpt-4o-mini")
         self.EVALUATION_BASE_URL = os.getenv("EVALUATION_BASE_URL", "https://api.openai.com/v1")
         # self.EVALUATION_API_KEY = os.getenv("EVALUATION_API_KEY", self.LLM_API_KEY)
         self.EVALUATION_SLEEP_TIME = int(os.getenv("EVALUATION_SLEEP_TIME", "10"))
-
-        # Qdrant Configuration
-        self.QDRANT_URL = os.getenv("QDRANT_URL", "")
-        self.QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
-        self.QDRANT_COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME", "")
-
-        # MongoDB Configuration
-        self.ATLAS_URI = os.getenv("ATLAS_URI", "")
-        self.DBNAME = os.getenv("DBNAME", "")
-
-        # Ingest Configuration
-        self.RESTAURANT_DOCS_PATH = os.getenv("RESTAURANT_DOCS_PATH", "")
-        self.PRODUCT_DOCS_PATH = os.getenv("PRODUCT_DOCS_PATH", "")
-        self.EMBEDDING_MODEL = "vertexai/text-embedding-004"
-
-        # Modules Configuration
-        self.TEXT_MODEL_NAME = "gemini-2.0-flash"
-        self.STT_MODEL_NAME = "whisper-large-v3-turbo"
-        self.TTS_MODEL_NAME = "eleven_flash_v2_5"
-        self.TTI_MODEL_NAME = "imagen-4.0-generate-preview-05-20"
-        self.VISION_MODEL_NAME = "llama-3.2-90b-vision-preview"
-
-        self.MEMORY_TOP_K = 3
-        self.ROUTER_MESSAGES_TO_ANALYZE = 3
-        self.TOTAL_MESSAGES_SUMMARY_TRIGGER = 20
-        self.TOTAL_MESSAGES_AFTER_SUMMARY = 5
-
-        self.SHORT_TERM_MEMORY_DB_PATH = "/app/data/memory.db"
-
-        self.PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "exo-genai")
-        self.LOCATION = os.getenv("GOOGLE_CLOUD_REGION", "us-central1")
 
         # Apply environment-specific settings
         self.apply_environment_settings()

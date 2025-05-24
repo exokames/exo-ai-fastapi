@@ -4,7 +4,8 @@
   ],
   "graphs": {
     "chat": "./app/core/langgraph/studio.py:get_graph",
-    "retrieval": "./app/core/langgraph/retrieval_graph/studio.py:get_graph"
+    "retrieval": "./app/core/langgraph/retrieval_graph/studio.py:get_graph",
+    "ai_companion": "./app/ai_companion/graph/studio.py:get_graph"
   },
   "env": ".env.development"
 }
